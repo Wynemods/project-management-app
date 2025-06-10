@@ -146,20 +146,6 @@ git push origin feature/<your-name>-<your-area>
 
 ---
 
-## ⚙️ Backend Setup (NestJS)
-
-To be configured by Alex and Nick. Includes:
-
-* User registration/login
-* Project assignment
-* JWT auth
-* PostgreSQL DB
-* Nodemailer for emails
-
-Detailed guide will follow once scaffolding is done.
-
----
-
 ## 💡 Tips for Team Members
 
 * **Ask Questions**: If you're stuck, ask.
@@ -173,7 +159,7 @@ Detailed guide will follow once scaffolding is done.
 
 * Daily progress updates
 * Work in branches
-* Pull Requests reviewed by Nick
+* Pull Requests review by team
 
 ---
 
