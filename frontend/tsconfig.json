@@ -1,0 +1,10 @@
+{
+    "compilerOptions": {
+      "target": "ES6",
+      "outDir": "dist",
+      "rootDir": "assets",
+      "strict": true
+    },
+    "include": ["assets"]
+  }
+  
