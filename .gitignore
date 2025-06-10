@@ -1,0 +1,66 @@
+# Node.js
+node_modules/
+dist/
+build/
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+
+# Logs
+logs
+*.log
+
+# Runtime data
+pids
+*.pid
+*.pid.lock
+*.seed
+
+# Diagnostic reports
+report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
+
+# Environment Variables
+.env
+.env.*
+!.env.example
+
+# Docker
+*.local
+docker-compose.override.yml
+
+# Coverage
+coverage/
+.nyc_output/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editors / IDEs
+.vscode/
+.idea/
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+*.sublime-workspace
+
+# VSCode (Optional: allow shared config)
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# Temp directories
+.temp
+.tmp
+
+# Monorepo-style cache and builds
+frontend/.cache/
+frontend/node_modules/
+backend/node_modules/
+backend/dist/
+backend/build/
