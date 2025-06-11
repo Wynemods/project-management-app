@@ -2,16 +2,65 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Login</title>
-  <link rel="stylesheet" href="../assets/style.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login - Project Management System</title>
+  <link rel="stylesheet" href="../styles/login.css">
+  <link rel="stylesheet" href="styles/auth.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-  <nav>
-    <a href="../index.html"><button>Home</button></a>
-    <a href="login.html"><button>Login</button></a>
-    <a href="register.html"><button>Register</button></a>
-  </nav>
+  <div class="auth-container">
+    <div class="auth-card">
+      <div class="auth-header">
+        <h1>Project Manager</h1>
+        <p>Access your project management dashboard</p>
+      </div>
 
-  <h2>Login Page</h2>
+      <div class="auth-tabs">
+        <div class="tab-header">
+          <button class="tab-btn active" data-tab="login">Login</button>
+          <button class="tab-btn" data-tab="register">Register</button>
+        </div>
+
+        <div class="tab-content">
+          <div class="tab-pane active" id="login-tab">
+            <form id="login-form">
+              <div class="form-group">
+                <label for="login-email">Email</label>
+                <input type="email" id="login-email" placeholder="admin@projectmanager.com" required>
+              </div>
+              <div class="form-group">
+                <label for="login-password">Password</label>
+                <input type="password" id="login-password" placeholder="Enter your password" required>
+              </div>
+              <div class="error-message" id="login-error"></div>
+              <button type="submit" class="btn btn-primary btn-block">Sign In</button>
+            </form>
+          </div>
+
+          <div class="tab-pane" id="register-tab">
+            <form id="register-form">
+              <div class="form-group">
+                <label for="register-name">Full Name</label>
+                <input type="text" id="register-name" placeholder="Enter your full name" required>
+              </div>
+              <div class="form-group">
+                <label for="register-email">Email</label>
+                <input type="email" id="register-email" placeholder="Enter your email" required>
+              </div>
+              <div class="form-group">
+                <label for="register-password">Password</label>
+                <input type="password" id="register-password" placeholder="Create a password" required>
+              </div>
+              <div class="error-message" id="register-error"></div>
+              <button type="submit" class="btn btn-primary btn-block">Create Account</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="scripts/auth.js"></script>
 </body>
 </html>
