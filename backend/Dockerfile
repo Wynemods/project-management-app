@@ -1,15 +1,22 @@
-# Dockerfile for NestJS Backend
-FROM node:18-alpine
+# --- Dev image ---
+    FROM node:18-alpine
 
-WORKDIR /app
-
-COPY package*.json ./
-RUN npm install
-
-COPY . .
-
-RUN npm run build
-
-EXPOSE 3000
-
-CMD ["node", "dist/main"]
+    # App lives here
+    WORKDIR /app
+    
+    # Global pnpm
+    RUN npm i -g pnpm
+    
+    # Install deps
+    COPY package.json pnpm-lock.yaml ./
+    RUN pnpm install
+    
+    # Bring in source
+    COPY . .
+    
+    # Expose Nest default port
+    EXPOSE 3000
+    
+    # Fire it up in watch mode
+    CMD ["pnpm", "run", "start:dev"]
+    

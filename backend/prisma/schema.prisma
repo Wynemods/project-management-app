@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
   output   = "../generated/prisma"
@@ -13,44 +7,44 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
- model User {
-  id        String   @id @default(uuid())
-  email     String   @unique
-  name      String?
-  password  String
-  role UserRole @default(USER)
-  isActive Boolean @map("is_active") @default(true)
-  profileImage String? @map("profile_image")
-  
 
-projects Projects []
-
- }
-  
-model Projects {
-  id        String   @id @default(uuid())
-  name      String
-  description String?
-  startDate DateTime @map("start_date")
-  endDate   DateTime @map("end_date")
-   status    projectStatus @default(NOT_STARTED)
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
-  userId    String @map("user_id")
-
-  user      User @relation(fields: [userId], references: [id])
+enum UserRole {
+  ADMIN
+  USER
 }
 
-  enum UserRole {
-    USER
-    ADMIN
-    
-  }
-  enum projectStatus {
-    NOT_STARTED
-    IN_PROGRESS
-    COMPLETED
-    ON_HOLD
-  }
+enum ProjectStatus {
+  NOT_STARTED
+  IN_PROGRESS
+  COMPLETED
+}
 
- 
+model User {
+  id        String    @id @default(uuid())
+  email     String    @unique
+  name      String
+  password  String
+  role      UserRole  @default(USER)
+  lastLogin DateTime? @map("last_login")
+  isActive  Boolean   @default(true) @map("is_active")
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+
+  project   Project? @relation(fields: [projectId], references: [id])
+  projectId String?  @unique @map("project_id")
+}
+
+model Project {
+  id          String        @id @default(uuid())
+  name        String
+  description String
+  startDate   DateTime      @default(now()) @map("start_date")
+  endDate     DateTime @map("end_date")
+  status      ProjectStatus @default(NOT_STARTED)
+  user        User?
+  createdAt   DateTime      @default(now()) @map("created_at")
+  updatedAt   DateTime      @updatedAt @map("updated_at")
+
+  completedAt DateTime? @map("completed_at")
+  createdBy   String? @map("created_by")
+}
