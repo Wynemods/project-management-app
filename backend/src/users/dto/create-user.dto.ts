@@ -1,4 +1,5 @@
-import { IsBoolean, IsEmail, IsNotEmpty, IsOptional, IsString, MinLength } from 'class-validator';
+import { IsBoolean, IsEmail, IsEnum, IsNotEmpty, IsOptional, IsString, MinLength } from 'class-validator';
+import { UserRole } from 'generated/prisma';
 
 export class CreateUserDto {
   @IsEmail({}, { message: 'Invalid email format' })
@@ -12,6 +13,12 @@ export class CreateUserDto {
   @IsString({ message: 'Password must be a string' })
   @MinLength(4, { message: 'Password must be at least 4 characters long' })
   password: string;
+
+  @IsOptional()
+  @IsEnum(UserRole, {
+    message: `Role must be one of: ${Object.values(UserRole).join(', ')}`,
+  })
+  role?: UserRole;
 
   @IsOptional()
   @IsBoolean()

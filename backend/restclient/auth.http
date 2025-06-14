@@ -1,0 +1,31 @@
+### Register a new user
+POST http://localhost:3000/auth/register
+Content-Type: application/json
+
+{
+  "name": "Test User",
+  "email": "test@example.com",
+  "password": "Password123!"
+}
+
+### Login with the registered user
+POST http://localhost:3000/auth/login
+Content-Type: application/json
+
+{
+  "email": "test@example.com",
+  "password": "Password123!"
+}
+
+### Refresh token (requires authentication)
+# @name refreshToken
+POST http://localhost:3000/auth/refresh
+Authorization: Bearer {{login.response.body.access_token}}
+
+### Validate token (for debugging)
+POST http://localhost:3000/auth/validate
+Content-Type: application/json
+
+{
+  "token": "{{login.response.body.access_token}}"
+}

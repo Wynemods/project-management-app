@@ -1,0 +1,171 @@
+# Project Management System - REST Client
+
+# Variables
+@baseUrl = http://localhost:3000
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhYWFmMzUwMS1hMDYxLTQ1YTQtYTNiYS00YmZiOTBlM2ExYjMiLCJlbWFpbCI6ImpvaG4uZG9lQGV4YW1wbGUuY29tIiwicm9sZSI6IlVTRVIiLCJpYXQiOjE3NDk5Mjg1MDEsImV4cCI6MTc1MDAxNDkwMX0.GA-FcUruVr7DBbwdSLTS7IRBqu-Eogbo5B_ENBThXwI
+
+### Authentication Endpoints
+
+# Register
+POST {{baseUrl}}/auth/register
+Content-Type: application/json
+
+{
+  "name": "John Doe",
+  "email": "john.doe@example.com",
+  "password": "StrongPass123!",
+  "role": "USER"
+}
+
+### Login
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "john.doe@example.com",
+  "password": "StrongPass123!"
+}
+
+### Refresh Token
+POST {{baseUrl}}/auth/refresh
+Authorization: Bearer {{token}}
+
+### Validate Token
+POST {{baseUrl}}/auth/validate
+Content-Type: application/json
+
+{
+  "token": "{{token}}"
+}
+
+### User Endpoints
+
+# Get All Users
+GET {{baseUrl}}/users
+Authorization: Bearer {{token}}
+
+### Get Active Users
+GET {{baseUrl}}/users/active
+Authorization: Bearer {{token}}
+
+### Get Users by Role
+GET {{baseUrl}}/users/role/USER
+Authorization: Bearer {{token}}
+
+### Get Specific User
+GET {{baseUrl}}/users/{{userId}}
+Authorization: Bearer {{token}}
+
+### Create User (Admin)
+POST {{baseUrl}}/users
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "name": "Jane Smith",
+  "email": "jane.smith@example.com",
+  "password": "SecurePass456!",
+  "role": "USER"
+}
+
+### Update User
+PUT {{baseUrl}}/users/{{userId}}
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "name": "John Updated",
+  "email": "john.updated@example.com"
+}
+
+### Change Password
+PUT {{baseUrl}}/users/{{userId}}/change-password
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "currentPassword": "StrongPass123!",
+  "newPassword": "NewStrongPass456!"
+}
+
+### Deactivate User
+DELETE {{baseUrl}}/users/{{userId}}
+Authorization: Bearer {{token}}
+
+### Permanent Delete User (Admin)
+DELETE {{baseUrl}}/users/{{userId}}/permanent
+Authorization: Bearer {{token}}
+
+### Project Endpoints
+
+# Create Project
+POST {{baseUrl}}/projects
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "name": "New Project",
+  "description": "Project description",
+  "endDate": "2024-12-31"
+}
+
+### Get All Projects
+GET {{baseUrl}}/projects
+Authorization: Bearer {{token}}
+
+### Get Specific Project
+GET {{baseUrl}}/projects/{{projectId}}
+Authorization: Bearer {{token}}
+
+### Update Project
+PUT {{baseUrl}}/projects/{{projectId}}
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "name": "Updated Project Name",
+  "description": "Updated project description"
+}
+
+### Assign Project to User
+POST {{baseUrl}}/projects/assign
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "projectId": "{{projectId}}",
+  "userId": "{{userId}}"
+}
+
+### Complete Project
+POST {{baseUrl}}/projects/{{projectId}}/complete
+Authorization: Bearer {{token}}
+
+### Delete Project
+DELETE {{baseUrl}}/projects/{{projectId}}
+Authorization: Bearer {{token}}
+
+### Permission Endpoints
+
+# Get Current User Permissions
+GET {{baseUrl}}/permissions
+Authorization: Bearer {{token}}
+
+### Check Specific Permission
+POST {{baseUrl}}/permissions/check
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "permission": "CREATE_PROJECT"
+}
+
+### Get Permission Descriptions (Admin)
+GET {{baseUrl}}/permissions/descriptions
+Authorization: Bearer {{token}}
+
+# Notes:
+# 1. Replace {{baseUrl}} with your actual base URL
+# 2. Replace {{token}} with your JWT token after login
+# 3. Replace {{userId}} and {{projectId}} with actual IDs
+# 4. Ensure you have the VSCode REST Client extension installed
