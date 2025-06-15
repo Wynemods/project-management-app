@@ -463,6 +463,33 @@ export class UsersService {
     }
   }
 
+  async updateProfileImage(
+    userId: string, 
+    imageData: { profileImageId: string | null; profileImageUrl: string | null }
+  ): Promise<UserResponseDto> {
+    try {
+      const updatedUser = await this.prisma.user.update({
+        where: { id: userId },
+        data: {
+          profileImageId: imageData.profileImageId,
+          profileImageUrl: imageData.profileImageUrl,
+        },
+        include: {
+          assignedProject: {
+            select: { id: true, name: true, status: true }
+          }
+        }
+      });
+  
+      return this.toResponseDto(updatedUser);
+    } catch (error) {
+      if (error.code === 'P2025') {
+        throw new NotFoundException(`User with id ${userId} not found`);
+      }
+      throw new InternalServerErrorException('Failed to update profile image');
+    }
+  }
+
   private toResponseDto(user: any): UserResponseDto {
     return new UserResponseDto({
       id: user.id,

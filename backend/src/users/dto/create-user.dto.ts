@@ -28,6 +28,11 @@ export class CreateUserDto {
   @IsOptional()
   @IsBoolean()
   isActive?: boolean;
+
+  @IsOptional()
+  profileImageId?: string;
+  @IsOptional()
+  profileImageUrl?: string;
 }
 
 export class UserResponseDto {
@@ -40,6 +45,9 @@ export class UserResponseDto {
   createdAt: Date;
   updatedAt: Date;
   assignedProject: Project | null;
+
+  profileImageId: string | null;
+  profileImageUrl: string | null;
   
   @Exclude()
   password: string;

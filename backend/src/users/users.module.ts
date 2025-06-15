@@ -3,6 +3,8 @@ import { ConfigModule } from '@nestjs/config';
 import { UsersService } from './users.service';
 import { UsersController } from './users.controller';
 import { PrismaModule } from 'src/config/prisma.config';
+import { CloudinaryService } from 'src/common/cloudinary/cloudinary.service';
+import { CloudinaryProvider } from 'src/config/cloudinary.config';
 
 @Module({
   imports: [
@@ -10,7 +12,7 @@ import { PrismaModule } from 'src/config/prisma.config';
     PrismaModule
   ],
   controllers: [UsersController],
-  providers: [UsersService],
+  providers: [UsersService, CloudinaryService, CloudinaryProvider],
   exports: [UsersService],
 })
 export class UsersModule {}
