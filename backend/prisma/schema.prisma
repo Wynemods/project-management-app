@@ -9,14 +9,15 @@ datasource db {
 }
 
 enum UserRole {
-  ADMIN
   USER
+  ADMIN
 }
 
 enum ProjectStatus {
   NOT_STARTED
   IN_PROGRESS
   COMPLETED
+  CANCELLED
 }
 
 model User {
@@ -30,21 +31,26 @@ model User {
   createdAt DateTime  @default(now()) @map("created_at")
   updatedAt DateTime  @updatedAt @map("updated_at")
 
-  project   Project? @relation(fields: [projectId], references: [id])
-  projectId String?  @unique @map("project_id")
+  assignedProject Project?
+
+  @@map("users")
 }
 
 model Project {
   id          String        @id @default(uuid())
-  name        String
-  description String
-  startDate   DateTime      @default(now()) @map("start_date")
-  endDate     DateTime @map("end_date")
+  name        String        @db.VarChar(255)
+  description String?        @db.Text
+  endDate     DateTime      @map("end_date")
   status      ProjectStatus @default(NOT_STARTED)
-  user        User?
   createdAt   DateTime      @default(now()) @map("created_at")
   updatedAt   DateTime      @updatedAt @map("updated_at")
-
-  completedAt DateTime? @map("completed_at")
-  createdBy   String? @map("created_by")
+  completedAt DateTime?     @map("completed_at")
+  
+  assignedUserId String? @unique @map("assigned_user_id")
+  assignedUser   User?   @relation(fields: [assignedUserId], references: [id], onDelete: SetNull)
+  
+  @@map("projects")
+  @@index([status])
+  @@index([endDate])
+  @@index([assignedUserId])
 }

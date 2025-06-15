@@ -1,5 +1,5 @@
-import { IsOptional, IsString, IsEmail, IsBoolean, IsDate, MinLength } from 'class-validator';
-import { Type } from 'class-transformer';
+import { IsOptional, IsString, IsEmail, IsBoolean, IsDate, MinLength, IsEnum, Matches } from 'class-validator';
+import { UserRole } from 'generated/prisma';
 
 export class UpdateUserDto {
   @IsOptional()
@@ -12,7 +12,10 @@ export class UpdateUserDto {
 
   @IsOptional()
   @IsString({ message: 'Password must be a string' })
-  @MinLength(4, { message: 'Password must be at least 4 characters long' })
+  @MinLength(8, { message: 'Password must be at least 8 characters long' })
+  @Matches(/((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/, {
+    message: 'Password must contain uppercase, lowercase, and number/special character',
+  })
   password?: string;
 
   @IsOptional()
@@ -20,7 +23,6 @@ export class UpdateUserDto {
   isActive?: boolean;
 
   @IsOptional()
-  @IsDate()
-  @Type(() => Date)
-  lastLogin?: Date;
+  @IsEnum(UserRole)
+  role?: UserRole;
 }

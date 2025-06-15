@@ -3,23 +3,23 @@ import {
   Injectable,
   NotFoundException,
   InternalServerErrorException,
+  BadRequestException,
 } from '@nestjs/common';
 import * as bcrypt from 'bcryptjs';
 import { UserRole } from 'generated/prisma';
 import { getPrismaClient } from 'src/config/prisma.config';
 
-import { User } from './interfaces/user.interface';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-
+import { UserResponseDto } from './dto/create-user.dto';
+import { User } from './interfaces/user.interface';
 
 @Injectable()
 export class UsersService {
-  // constructor(private readonly cloudinaryService: CloudinaryService) {}
-
   private prisma = getPrismaClient();
+  private readonly saltRounds = parseInt(process.env.BCRYPT_SALT_ROUNDS) || 12;
 
-  async create(data: CreateUserDto): Promise<User> {
+  async createUser(data: CreateUserDto): Promise<UserResponseDto> {
     try {
       const existingUser = await this.prisma.user.findUnique({
         where: { email: data.email },
@@ -31,10 +31,7 @@ export class UsersService {
         );
       }
 
-      // Hash password if provided
-
-      const saltRounds = 10;
-      const hashedPassword = await bcrypt.hash(data.password, saltRounds);
+      const hashedPassword = await bcrypt.hash(data.password, this.saltRounds);
 
       const user = await this.prisma.user.create({
         data: {
@@ -42,12 +39,16 @@ export class UsersService {
           email: data.email,
           password: hashedPassword,
           role: data.role || UserRole.USER,
-          isActive: true,
+          isActive: data.isActive ?? true,
         },
+        include: {
+          assignedProject: {
+            select: { id: true, name: true, status: true }
+          }
+        }
       });
 
-      console.log(`Created new user ${user.name} (ID: ${user.id})`);
-      return user;
+      return this.toResponseDto(user);
     } catch (error) {
       if (error instanceof ConflictException) {
         throw error;
@@ -58,58 +59,94 @@ export class UsersService {
     }
   }
 
-  async findAll(): Promise<User[]> {
+  async findAllUsers(): Promise<UserResponseDto[]> {
     try {
       const users = await this.prisma.user.findMany({
-        orderBy: { id: 'asc' },
+        include: {
+          assignedProject: {
+            select: { id: true, name: true, status: true }
+          }
+        },
+        orderBy: { createdAt: 'desc' },
       });
-      return users;
+      return users.map(user => this.toResponseDto(user));
     } catch (error) {
-      throw new InternalServerErrorException('Failed to retrieve users', error);
+      throw new InternalServerErrorException('Failed to retrieve users');
     }
   }
 
-  async findActive(): Promise<User[]> {
+  async findActiveUsers(): Promise<UserResponseDto[]> {
     try {
       const users = await this.prisma.user.findMany({
         where: { isActive: true },
-        orderBy: { id: 'asc' },
+        include: {
+          assignedProject: {
+            select: { id: true, name: true, status: true }
+          }
+        },
+        orderBy: { createdAt: 'desc' },
       });
-      return users;
+      return users.map(user => this.toResponseDto(user));
     } catch (error) {
       throw new InternalServerErrorException(
         'Failed to retrieve active users',
-        error,
       );
     }
   }
 
-  async findByRole(role: UserRole): Promise<User[]> {
+  async findUsersWithoutProject(): Promise<UserResponseDto[]> {
+    try {
+      const users = await this.prisma.user.findMany({
+        where: { 
+          isActive: true,
+          role: UserRole.USER,
+          assignedProject: null
+        },
+        orderBy: { createdAt: 'desc' },
+      });
+      return users.map(user => this.toResponseDto(user));
+    } catch (error) {
+      throw new InternalServerErrorException(
+        'Failed to retrieve users without projects',
+      );
+    }
+  }
+
+  async findUserByRole(role: UserRole): Promise<UserResponseDto[]> {
     try {
       const users = await this.prisma.user.findMany({
         where: { role, isActive: true },
-        orderBy: { id: 'asc' },
+        include: {
+          assignedProject: {
+            select: { id: true, name: true, status: true }
+          }
+        },
+        orderBy: { createdAt: 'desc' },
       });
-      return users;
+      return users.map(user => this.toResponseDto(user));
     } catch (error) {
       throw new InternalServerErrorException(
         `Failed to retrieve users with role ${role}`,
-        error,
       );
     }
   }
 
-  async findOne(id: string): Promise<User> {
+  async findOneUser(id: string): Promise<UserResponseDto> {
     try {
       const user = await this.prisma.user.findUnique({
         where: { id },
+        include: {
+          assignedProject: {
+            select: { id: true, name: true, description: true, status: true, endDate: true }
+          }
+        },
       });
 
       if (!user) {
         throw new NotFoundException(`User with id ${id} not found`);
       }
 
-      return user;
+      return this.toResponseDto(user);
     } catch (error) {
       if (error instanceof NotFoundException) {
         throw error;
@@ -118,17 +155,22 @@ export class UsersService {
     }
   }
 
-  async findByEmail(email: string): Promise<User> {
+  async findUserByEmail(email: string): Promise<UserResponseDto> {
     try {
       const user = await this.prisma.user.findUnique({
         where: { email },
+        include: {
+          assignedProject: {
+            select: { id: true, name: true, status: true }
+          }
+        },
       });
 
       if (!user) {
         throw new NotFoundException(`User with email ${email} not found`);
       }
 
-      return user;
+      return this.toResponseDto(user);
     } catch (error) {
       if (error instanceof NotFoundException) {
         throw error;
@@ -137,9 +179,8 @@ export class UsersService {
     }
   }
 
-  async update(id: string, data: UpdateUserDto): Promise<User> {
+  async updateUser(id: string, data: UpdateUserDto): Promise<UserResponseDto> {
     try {
-      // Check if user exists
       const existingUser = await this.prisma.user.findUnique({
         where: { id },
       });
@@ -148,7 +189,6 @@ export class UsersService {
         throw new NotFoundException(`User with id ${id} not found`);
       }
 
-      // Check for email conflicts if email is being updated
       if (data.email && data.email !== existingUser.email) {
         const emailConflict = await this.prisma.user.findUnique({
           where: { email: data.email },
@@ -159,23 +199,28 @@ export class UsersService {
         }
       }
 
-      // Hash password if provided
-      let hashedPassword: string | undefined;
+      const updateData: any = {};
+      
+      if (data.name) updateData.name = data.name;
+      if (data.email) updateData.email = data.email;
+      if (data.isActive !== undefined) updateData.isActive = data.isActive;
+      if (data.role) updateData.role = data.role;
+      
       if (data.password) {
-        const saltRounds = 10;
-        hashedPassword = await bcrypt.hash(data.password, saltRounds);
+        updateData.password = await bcrypt.hash(data.password, this.saltRounds);
       }
 
       const updatedUser = await this.prisma.user.update({
         where: { id },
-        data: {
-          ...(data.name && { name: data.name }),
-          ...(data.email && { email: data.email }),
-          ...(hashedPassword && { password: hashedPassword }),
-          },
+        data: updateData,
+        include: {
+          assignedProject: {
+            select: { id: true, name: true, status: true }
+          }
+        },
       });
 
-      return updatedUser;
+      return this.toResponseDto(updatedUser);
     } catch (error) {
       if (
         error instanceof NotFoundException ||
@@ -187,7 +232,141 @@ export class UsersService {
     }
   }
 
-  async changePassword(
+  async updateUserLastLogin(id: string): Promise<void> {
+    try {
+      await this.prisma.user.update({
+        where: { id },
+        data: { lastLogin: new Date() },
+      });
+    } catch (error) {
+      throw new InternalServerErrorException('Failed to update last login');
+    }
+  }
+
+  async assignUserProject(userId: string, projectId: string): Promise<UserResponseDto> {
+    try {
+      const user = await this.prisma.user.findUnique({
+        where: { id: userId },
+        include: { assignedProject: true }
+      });
+
+      if (!user) {
+        throw new NotFoundException(`User with id ${userId} not found`);
+      }
+
+      if (user.role === UserRole.ADMIN) {
+        throw new BadRequestException('Cannot assign projects to admin users');
+      }
+
+      if (user.assignedProject) {
+        throw new ConflictException('User already has an assigned project');
+      }
+
+      const project = await this.prisma.project.findUnique({
+        where: { id: projectId },
+        include: { assignedUser: true }
+      });
+
+      if (!project) {
+        throw new NotFoundException(`Project with id ${projectId} not found`);
+      }
+
+      if (project.assignedUser) {
+        throw new ConflictException('Project is already assigned to another user');
+      }
+
+      const updatedUser = await this.prisma.user.update({
+        where: { id: userId },
+        data: {
+          assignedProject: {
+            connect: { id: projectId }
+          }
+        },
+        include: {
+          assignedProject: {
+            select: { id: true, name: true, description: true, status: true, endDate: true }
+          }
+        },
+      });
+
+      return this.toResponseDto(updatedUser);
+    } catch (error) {
+      if (
+        error instanceof NotFoundException ||
+        error instanceof ConflictException ||
+        error instanceof BadRequestException
+      ) {
+        throw error;
+      }
+      throw new InternalServerErrorException('Failed to assign project');
+    }
+  }
+
+  async unassignUserProject(userId: string): Promise<UserResponseDto> {
+    try {
+      const user = await this.prisma.user.findUnique({
+        where: { id: userId },
+        include: { assignedProject: true }
+      });
+
+      if (!user) {
+        throw new NotFoundException(`User with id ${userId} not found`);
+      }
+
+      if (!user.assignedProject) {
+        throw new BadRequestException('User has no assigned project');
+      }
+
+      const updatedUser = await this.prisma.user.update({
+        where: { id: userId },
+        data: {
+          assignedProject: {
+            disconnect: true
+          }
+        },
+        include: {
+          assignedProject: {
+            select: { id: true, name: true, status: true }
+          }
+        },
+      });
+
+      return this.toResponseDto(updatedUser);
+    } catch (error) {
+      if (
+        error instanceof NotFoundException ||
+        error instanceof BadRequestException
+      ) {
+        throw error;
+      }
+      throw new InternalServerErrorException('Failed to unassign project');
+    }
+  }
+
+  async getUserWithPassword(email: string): Promise<User> {
+    try {
+      const user = await this.prisma.user.findUnique({
+        where: { email },
+        include: {
+          assignedProject: {
+            select: { id: true, name: true, status: true }
+          }
+        }
+      });
+
+      if (!user) {
+        throw new NotFoundException(`User with email ${email} not found`);
+      }
+      return user;
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
+      throw new InternalServerErrorException('Failed to retrieve user');
+    }
+  }
+
+  async changeUserPassword(
     id: string,
     currentPassword: string,
     newPassword: string,
@@ -201,18 +380,16 @@ export class UsersService {
         throw new NotFoundException(`User with id ${id} not found`);
       }
 
-      // Verify current password
       const isCurrentPasswordValid = await bcrypt.compare(
         currentPassword,
         user.password,
       );
+      
       if (!isCurrentPasswordValid) {
-        throw new ConflictException('Current password is incorrect');
+        throw new BadRequestException('Current password is incorrect');
       }
 
-      // Hash new password
-      const saltRounds = 10;
-      const hashedNewPassword = await bcrypt.hash(newPassword, saltRounds);
+      const hashedNewPassword = await bcrypt.hash(newPassword, this.saltRounds);
 
       await this.prisma.user.update({
         where: { id },
@@ -223,7 +400,7 @@ export class UsersService {
     } catch (error) {
       if (
         error instanceof NotFoundException ||
-        error instanceof ConflictException
+        error instanceof BadRequestException
       ) {
         throw error;
       }
@@ -231,7 +408,7 @@ export class UsersService {
     }
   }
 
-  async remove(id: string): Promise<{ message: string }> {
+  async deactivateUser(id: string): Promise<{ message: string }> {
     try {
       const user = await this.prisma.user.findUnique({
         where: { id, isActive: true },
@@ -255,14 +432,22 @@ export class UsersService {
     }
   }
 
-  async delete(id: string): Promise<{ message: string }> {
+  async deleteUser(id: string): Promise<{ message: string }> {
     try {
       const user = await this.prisma.user.findUnique({
         where: { id },
+        include: { assignedProject: true }
       });
 
       if (!user) {
         throw new NotFoundException(`User with ID ${id} not found`);
+      }
+
+      if (user.assignedProject) {
+        await this.prisma.project.update({
+          where: { id: user.assignedProject.id },
+          data: { assignedUserId: null }
+        });
       }
 
       await this.prisma.user.delete({
@@ -278,4 +463,17 @@ export class UsersService {
     }
   }
 
+  private toResponseDto(user: any): UserResponseDto {
+    return new UserResponseDto({
+      id: user.id,
+      email: user.email,
+      name: user.name,
+      role: user.role,
+      isActive: user.isActive,
+      lastLogin: user.lastLogin,
+      createdAt: user.createdAt,
+      updatedAt: user.updatedAt,
+      assignedProject: user.assignedProject,
+    });
+  }
 }

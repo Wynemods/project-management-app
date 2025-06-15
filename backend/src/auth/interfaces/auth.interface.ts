@@ -7,6 +7,16 @@ export interface AuthResponse {
     name: string;
     email: string;
     role: UserRole;
-    profileImage?: string;
+    isActive: boolean;
+    lastLogin: Date;
   };
+  message: string;
+}
+
+export interface AuthUser {
+  id: string;
+  name: string;
+  email: string;
+  role: UserRole;
+  isActive: boolean;
 }

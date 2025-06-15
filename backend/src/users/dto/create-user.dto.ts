@@ -1,5 +1,7 @@
-import { IsBoolean, IsEmail, IsEnum, IsNotEmpty, IsOptional, IsString, MinLength } from 'class-validator';
+import { Exclude } from 'class-transformer';
+import { IsBoolean, IsEmail, IsEnum, IsNotEmpty, IsOptional, IsString, Matches, MinLength } from 'class-validator';
 import { UserRole } from 'generated/prisma';
+import { Project } from 'src/projects/interface/project.interface';
 
 export class CreateUserDto {
   @IsEmail({}, { message: 'Invalid email format' })
@@ -11,7 +13,10 @@ export class CreateUserDto {
   name: string;
 
   @IsString({ message: 'Password must be a string' })
-  @MinLength(4, { message: 'Password must be at least 4 characters long' })
+  @MinLength(8, { message: 'Password must be at least 8 characters long' })
+  @Matches(/((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/, {
+    message: 'Password must contain uppercase, lowercase, and number/special character',
+  })
   password: string;
 
   @IsOptional()
@@ -22,5 +27,24 @@ export class CreateUserDto {
 
   @IsOptional()
   @IsBoolean()
-  isActive?: boolean = true;
+  isActive?: boolean;
+}
+
+export class UserResponseDto {
+  id: string;
+  email: string;
+  name: string;
+  role: UserRole;
+  isActive: boolean;
+  lastLogin: Date | null;
+  createdAt: Date;
+  updatedAt: Date;
+  assignedProject: Project | null;
+  
+  @Exclude()
+  password: string;
+
+  constructor(partial: Partial<UserResponseDto>) {
+    Object.assign(this, partial);
+  }
 }

@@ -1,11 +1,11 @@
-import { IsNotEmpty, IsUUID } from 'class-validator';
+import { IsNotEmpty, IsString } from 'class-validator';
 
 export class AssignProjectDto {
-  @IsUUID('4', { message: 'Invalid user ID' })
+  @IsString({ message: 'User ID must be a string' })
   @IsNotEmpty({ message: 'User ID is required' })
   userId: string;
 
-  @IsUUID('4', { message: 'Invalid project ID' })
+  @IsString({ message: 'Project ID must be a string' })
   @IsNotEmpty({ message: 'Project ID is required' })
   projectId: string;
 }

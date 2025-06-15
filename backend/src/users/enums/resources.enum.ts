@@ -1,6 +1,0 @@
-export enum Resource {
-  USER = 'USER',
-  PROJECT = 'PROJECT',
-  NOTIFICATION = 'NOTIFICATION',
-  SYSTEM = 'SYSTEM'
-}
