@@ -65,6 +65,9 @@ registerForm.addEventListener("submit", async (e) => {
   try {
     const response = await fetch("/api/register", {
       method: "POST",
+      headers : {
+        'Content-Type' : 'application/json'
+      },
       body: formData,
     });
 

@@ -5,10 +5,10 @@ interface UserProfile {
 }
 
 interface Project {
-  id: number;
-  title: string;
+  id: string;
+  name: string;
   description: string;
-  status: string;
+  status: 'active' | 'completed' | 'pending' | 'cancelled';
 }
 
 async function fetchProfile(): Promise<UserProfile> {
@@ -58,7 +58,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
   try {
-    const projects = await fetchProjects();
+    const projects = await fetchUserProjects();
     if (projects.length === 0) {
       noProjectMessage!.style.display = "block";
     } else {
@@ -66,7 +66,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         const card = document.createElement("div");
         card.className = "project-card";
         card.innerHTML = `
-          <h3>${project.title}</h3>
+          <h3>${project.name}</h3>
           <p>${project.description}</p>
           <p>Status: <strong>${project.status}</strong></p>
           <button class="btn btn-primary" data-id="${project.id}">Mark as Completed</button>
