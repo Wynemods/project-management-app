@@ -1,0 +1,113 @@
+"use strict";
+async function authFetch(url, options = {}) {
+    const token = localStorage.getItem("authToken");
+    if (!token) {
+        throw new Error("No auth token found");
+    }
+    const headers = {
+        "Authorization": `Bearer ${token}`,
+        "Content-Type": "application/json",
+        ...options.headers,
+    };
+    const response = await fetch(url, {
+        ...options,
+        headers,
+    });
+    if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+    return response.json();
+}
+async function fetchProfile() {
+    return authFetch("http://localhost:3000/users/profile");
+}
+async function fetchUserProjects() {
+    return authFetch("http://localhost:3000/projects");
+}
+async function markProjectCompleted(id) {
+    const markComplete = await authFetch(`http://localhost:3000/projects/${id}/complete`, {
+        method: "POST",
+    });
+    if (markComplete.status === 'COMPLETED') {
+        return await authFetch(`http://localhost:3000/projects/${markComplete.assignedUser.id}/unassign-project`, {
+            method: 'DELETE'
+        });
+    }
+}
+document.addEventListener("DOMContentLoaded", async () => {
+    console.log('LOADING PAGE');
+    const nameEl = document.getElementById("current-user-name");
+    const emailEl = document.getElementById("profile-email");
+    const joinDateEl = document.getElementById("profile-date");
+    const profileNameEl = document.getElementById("profile-name");
+    const projectContainer = document.getElementById("project-container");
+    const noProjectMessage = document.getElementById("no-project-message");
+    const logoutBtn = document.getElementById("logout-btn");
+    const completionModal = document.getElementById("completion-modal");
+    const confirmBtn = document.getElementById("confirm-completion");
+    const cancelBtn = document.getElementById("cancel-completion");
+    const closeBtn = document.querySelector(".close-btn");
+    let selectedProjectId = null;
+    try {
+        const profile = await fetchProfile();
+        console.log("USER PROFILE", profile);
+        document.getElementById("current-user-name").innerHTML = profile.name;
+        document.getElementById("current-user-name").innerHTML = profile.name;
+        document.getElementById("profile-email").innerHTML = profile.email;
+        document.getElementById("profile-date").innerHTML = profile.createdAt;
+    }
+    catch (err) {
+        console.error("USER PROFILE ERROR", err);
+        // alert("Could not load profile.");
+    }
+    try {
+        const projects = await fetchUserProjects();
+        if (projects.length === 0) {
+            noProjectMessage.style.display = "block";
+        }
+        else {
+            projects.forEach((project) => {
+                const card = document.createElement("div");
+                card.className = "project-card";
+                card.innerHTML = `
+          <h3>${project.name}</h3>
+          <p>${project.description}</p>
+          <p>Status: <strong>${project.status}</strong></p>
+          <button class="btn btn-primary" data-id="${project.id}">Mark as Completed</button>
+        `;
+                projectContainer?.appendChild(card);
+            });
+        }
+    }
+    catch (err) {
+        // alert("Could not load projects.");
+        console.error("Projects Error:", err);
+    }
+    projectContainer?.addEventListener("click", (e) => {
+        const target = e.target;
+        if (target.tagName === "BUTTON" && target.dataset.id) {
+            selectedProjectId = target.dataset.id;
+            completionModal.classList.add("show");
+        }
+    });
+    closeBtn?.addEventListener("click", () => completionModal.classList.remove("show"));
+    cancelBtn?.addEventListener("click", () => completionModal.classList.remove("show"));
+    confirmBtn?.addEventListener("click", async () => {
+        if (selectedProjectId !== null) {
+            try {
+                await markProjectCompleted(selectedProjectId);
+                alert("Project marked as completed!");
+                location.reload();
+            }
+            catch {
+                alert("Error completing project.");
+            }
+        }
+        completionModal.classList.remove("show");
+    });
+    logoutBtn?.addEventListener("click", async (e) => {
+        e.preventDefault();
+        await fetch("/api/user/logout", { method: "POST", credentials: "include" });
+        window.location.href = "../pages/login.html";
+    });
+});

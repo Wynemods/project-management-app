@@ -1,0 +1,15 @@
+{
+  "name": "frontend",
+  "version": "1.0.0",
+  "scripts": {
+    "build": "tsc && mkdir -p dist && cp index.html dist/ && cp -r pages dist/pages && cp assets/style.css dist/"
+  },
+  "devDependencies": {
+    "typescript": "^5.8.3"
+  },
+  "main": "index.js",
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": ""
+}
