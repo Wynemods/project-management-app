@@ -1,0 +1,39 @@
+<div class="header">
+    <h1>Test Email ✅</h1>
+    <p>Your email system is working perfectly!</p>
+</div>
+
+<div class="content">
+    <h2>Hello {{name}}!</h2>
+    
+    <p>This is a test email to verify that your {{appName}} email system is configured correctly and working as expected.</p>
+    
+    <div class="info-box" style="background-color: #f0fdf4; border-left-color: #22c55e;">
+        <h3 style="color: #166534;">✅ Email System Status</h3>
+        <p style="color: #166534;"><strong>• SMTP Configuration:</strong> ✅ Working</p>
+        <p style="color: #166534;"><strong>• Template Rendering:</strong> ✅ Working</p>
+        <p style="color: #166534;"><strong>• Email Delivery:</strong> ✅ Working</p>
+        <p style="color: #166534;"><strong>• Timestamp:</strong> {{currentDate}}</p>
+    </div>
+    
+    <div class="text-center mt-20">
+        <div style="background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%); color: white; padding: 20px; border-radius: 8px; display: inline-block; box-shadow: 0 4px 10px rgba(34, 197, 94, 0.2);">
+            <h3 style="margin: 0; color: white; font-weight: 700;">🎉 Success!</h3>
+            <p style="margin: 10px 0 0 0; color: white; font-size: 15px;">Your email system is ready to use</p>
+        </div>
+    </div>
+    
+    <div class="divider"></div>
+    
+    <p>If you received this email, it means your email configuration is working correctly. You can now confidently send welcome emails, password resets, project notifications, and more!</p>
+    
+    <p>Happy emailing!</p>
+    
+    <p>Best regards,<br>
+    The {{appName}} Development Team</p>
+</div>
+
+<div class="footer">
+    <p>&copy; {{currentYear}} {{appName}}. All rights reserved.</p>
+    <p>This is a test email sent from your application</p>
+</div>
