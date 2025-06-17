@@ -29,37 +29,6 @@ function clearAuthToken(): void {
   localStorage.removeItem('authToken');
   sessionStorage.removeItem('authToken');
 }
-const BASE_URL = "http://localhost:3000";
-
-interface LoginResponse {
-  message?: string;
-  user?: {
-    id: string;
-    name: string;
-    email: string;
-    role: string;
-    isActive: boolean;
-    createdAt: string;
-    updatedAt: string;
-  };
-  token?: string;
-  role?: string;
-  [key: string]: any;
-}
-
-// Token management functions
-function setAuthToken(token: string, remember: boolean = false): void {
-  if (remember) {
-    localStorage.setItem('authToken', token);
-  } else {
-    sessionStorage.setItem('authToken', token);
-  }
-}
-
-function clearAuthToken(): void {
-  localStorage.removeItem('authToken');
-  sessionStorage.removeItem('authToken');
-}
 
 document.addEventListener("DOMContentLoaded", () => {
   const loginForm = document.getElementById("loginForm") as HTMLFormElement | null;
@@ -68,7 +37,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const togglePassword = document.getElementById("togglePassword") as HTMLButtonElement | null;
   const passwordInput = document.getElementById("password") as HTMLInputElement | null;
 
-  // Toggle password visibility
   // Toggle password visibility
   if (togglePassword && passwordInput) {
     togglePassword.addEventListener("click", () => {
@@ -82,17 +50,14 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // Form submission handler
-  // Form submission handler
   if (loginForm && loginBtn && btnLoader) {
     loginForm.addEventListener("submit", async (e) => {
       e.preventDefault();
 
       // Disable form and show loader
-      // Disable form and show loader
       loginBtn.disabled = true;
       btnLoader.style.display = "inline-block";
 
-      // Get form values
       // Get form values
       const emailInput = document.getElementById("email") as HTMLInputElement | null;
       const passwordInput = document.getElementById("password") as HTMLInputElement | null;
@@ -114,44 +79,13 @@ document.addEventListener("DOMContentLoaded", () => {
         console.log("Attempting login for:", email);
 
         const response = await fetch(`${BASE_URL}/auth/login`, {
-      // Validate inputs
-      if (!email || !password) {
-        alert("Please enter both email and password.");
-        loginBtn.disabled = false;
-        btnLoader.style.display = "none";
-        return;
-      }
-
-      try {
-        console.log("Attempting login for:", email);
-
-        const response = await fetch(`${BASE_URL}/auth/login`, {
           method: "POST",
-          headers: { 
-            "Content-Type": "application/json" 
-          },
-          body: JSON.stringify({ email, password }),
           headers: { 
             "Content-Type": "application/json" 
           },
           body: JSON.stringify({ email, password }),
         });
 
-        console.log("Login response status:", response.status);
-
-        let result: LoginResponse = { message: "Unknown error" };
-        
-        // Check if response is JSON
-        const contentType = response.headers.get("content-type");
-        if (contentType?.includes("application/json")) {
-          result = await response.json();
-        } else {
-          const textResponse = await response.text();
-          console.error("Non-JSON response:", textResponse);
-          throw new Error("Server returned invalid response");
-        }
-
-        console.log("Login result:", result);
         console.log("Login response status:", response.status);
 
         let result: LoginResponse = { message: "Unknown error" };
@@ -212,33 +146,7 @@ document.addEventListener("DOMContentLoaded", () => {
           }
           
           alert(errorMessage);
-          // Handle login failure
-          let errorMessage = "Login failed";
-          
-          if (result.message) {
-            errorMessage = result.message;
-          } else if (response.status === 401) {
-            errorMessage = "Invalid email or password";
-          } else if (response.status === 429) {
-            errorMessage = "Too many login attempts. Please try again later.";
-          } else if (response.status >= 500) {
-            errorMessage = "Server error. Please try again later.";
-          }
-          
-          alert(errorMessage);
         }
-      } catch (error) {
-        console.error("Login error:", error);
-        
-        let errorMessage = "An error occurred during login.";
-        
-        if (error instanceof TypeError && error.message.includes("fetch")) {
-          errorMessage = "Cannot connect to server. Please check if the server is running.";
-        } else if (error instanceof Error) {
-          errorMessage = error.message;
-        }
-        
-        alert(errorMessage);
       } catch (error) {
         console.error("Login error:", error);
         
@@ -253,15 +161,11 @@ document.addEventListener("DOMContentLoaded", () => {
         alert(errorMessage);
       } finally {
         // Re-enable form
-        // Re-enable form
         loginBtn.disabled = false;
         btnLoader.style.display = "none";
       }
     });
   }
-
-  // Clear any existing tokens on login page load
-  clearAuthToken();
 
   // Clear any existing tokens on login page load
   clearAuthToken();
