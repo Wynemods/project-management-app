@@ -61,6 +61,7 @@ Thumbs.db
 # Monorepo-style cache and builds
 frontend/.cache/
 frontend/node_modules/
+frontend/dist/
 backend/node_modules/
 backend/dist/
 backend/build/

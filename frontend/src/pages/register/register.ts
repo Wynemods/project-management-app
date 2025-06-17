@@ -221,8 +221,8 @@ async function performRegistration(userName: string, email: string, password: st
 function handleRegistrationSuccess(): void {
   showMessage("Registration successful!");
   resetForm();
-  // Redirect to login
-  window.location.href = "./login.html";
+  const baseUrl = window.location.origin;
+  window.location.replace(`${baseUrl}/pages/login/login.html`);
 }
 
 // Form submit logic

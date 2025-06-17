@@ -2,14 +2,15 @@
   "name": "frontend",
   "version": "1.0.0",
   "scripts": {
-    "build": "tsc && mkdir -p dist && cp index.html dist/ && cp -r pages dist/pages && cp assets/style.css dist/"
+    "clean": "rm -rf dist",
+    "build": "npm run clean && tsc && npm run copy-assets",
+    "copy-assets": "mkdir -p dist && cp -R src/{pages,styles,index.html} dist/",
+    "start": "http-server dist -p 8080"
   },
   "devDependencies": {
-    "typescript": "^5.8.3"
+    "typescript": "^5.4.0"
   },
-  "main": "index.js",
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "description": ""
+  "dependencies": {
+    "http-server": "^14.1.1"
+  }
 }

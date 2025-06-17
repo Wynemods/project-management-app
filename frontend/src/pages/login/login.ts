@@ -115,22 +115,24 @@ document.addEventListener("DOMContentLoaded", () => {
 
           // Determine redirect based on user role
           const userRole = result.user?.role || result.role;
-          
+          const baseUrl = window.location.origin;
+         
+         console.log("BASE URL", baseUrl);
           console.log("User role:", userRole);
 
           // Show success message
           alert(`Welcome back, ${result.user?.name || 'User'}!`);
           
-          // Redirect based on role
-          if (userRole === "ADMIN") {
-            window.location.href = "../dashboard/adminDashboard.html";
-          } else if (userRole === "USER") {
-            window.location.href = "../dashboard/userDashboard.html";
-          } else {
-            // Fallback redirect if role is not recognized
-            console.warn("Unknown user role:", userRole);
-            window.location.href = "../dashboard/userDashboard.html";
-          }
+         
+
+        if (userRole === "ADMIN") {
+          window.location.replace(`${baseUrl}/pages/dashboard/admin/adminDashboard.html`);
+        } else if (userRole === "USER") {
+          window.location.replace(`${baseUrl}/pages/dashboard/user/userDashboard.html`);
+        } else {
+          console.warn("Unknown user role:", userRole);
+          window.location.replace(`${baseUrl}/pages/dashboard/user/userDashboard.html`);
+        }
         } else {
           // Handle login failure
           let errorMessage = "Login failed";

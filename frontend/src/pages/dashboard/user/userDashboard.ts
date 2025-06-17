@@ -139,6 +139,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   logoutBtn?.addEventListener("click", async (e) => {
     e.preventDefault();
     await fetch("/api/user/logout", { method: "POST", credentials: "include" });
-    window.location.href = "../pages/login.html";
+    const baseUrl = window.location.origin;
+    window.location.replace(`${baseUrl}/pages/login/login.html`);
   });
 });

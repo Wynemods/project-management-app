@@ -686,7 +686,8 @@ class AdminDashboard {
   private logout(): void {
     console.log("Logging out");
     localStorage.removeItem("authToken");
-    window.location.href = "../pages/login.html";
+    const baseUrl = window.location.origin;
+    window.location.replace(`${baseUrl}/pages/login/login.html`);
   }
 
   private updateElement(id: string, content: string): void {
