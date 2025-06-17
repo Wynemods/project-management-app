@@ -50,7 +50,7 @@ export class AuthService {
       try {
         await this.emailService.sendWelcomeEmail(user.email, {
           name: user.name,
-          loginUrl: 'http://localhost:3000/pages/login.html',
+          loginUrl: 'http://localhost:3000/pages/login/login.html',
           supportEmail: 'support@project-managment.com',
           email: 'ebs362920@gmail.com',
           currentYear: new Date().getFullYear(),

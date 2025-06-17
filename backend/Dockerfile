@@ -1,22 +1,15 @@
-# --- Dev image ---
-    FROM node:18-alpine
+FROM node:20-slim
 
-    # App lives here
-    WORKDIR /app
-    
-    # Global pnpm
-    RUN npm i -g pnpm
-    
-    # Install deps
-    COPY package.json pnpm-lock.yaml ./
-    RUN pnpm install
-    
-    # Bring in source
-    COPY . .
-    
-    # Expose Nest default port
-    EXPOSE 3000
-    
-    # Fire it up in watch mode
-    CMD ["pnpm", "run", "start:dev"]
-    
+WORKDIR /app
+
+COPY package*.json ./
+RUN npm install
+
+COPY . .
+
+RUN npm install -g @nestjs/cli
+RUN npx prisma generate
+
+EXPOSE 3000
+
+CMD ["npm", "run", "start:dev"]
