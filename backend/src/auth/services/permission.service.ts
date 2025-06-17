@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { UserRole } from 'generated/prisma';
+import { UserRole } from '@prisma/client';
 import { Permission } from '../enums/permissions.enum';
 import { ROLE_PERMISSIONS } from 'src/config/permission.config';
 import { PermissionContext } from '../interfaces/permissions.interface';

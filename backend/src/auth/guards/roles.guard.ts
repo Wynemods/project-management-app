@@ -1,6 +1,6 @@
 import { Injectable, CanActivate, ExecutionContext, ForbiddenException } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { UserRole } from 'generated/prisma';
+import { UserRole } from '@prisma/client';
 import { AuthenticatedUser } from '../interfaces/jwt.interface';
 
 @Injectable()

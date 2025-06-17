@@ -1,6 +1,6 @@
 import { Exclude } from 'class-transformer';
 import { IsBoolean, IsEmail, IsEnum, IsNotEmpty, IsOptional, IsString, Matches, MinLength } from 'class-validator';
-import { UserRole } from 'generated/prisma';
+import { UserRole } from '@prisma/client';
 import { Project } from 'src/projects/interface/project.interface';
 
 export class CreateUserDto {

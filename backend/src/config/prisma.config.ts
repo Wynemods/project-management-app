@@ -1,5 +1,5 @@
 import { Injectable, Module, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
-import { PrismaClient } from 'generated/prisma';
+import { PrismaClient } from '@prisma/client';
 
 @Injectable()
 export class PrismaService extends PrismaClient implements OnModuleInit, OnModuleDestroy {
@@ -24,7 +24,6 @@ export class PrismaService extends PrismaClient implements OnModuleInit, OnModul
 })
 export class PrismaModule {}
 
-// Legacy function maintained for backward compatibility
 let prisma: PrismaClient;
 export const getPrismaClient = (): PrismaClient => {
   if (!prisma) {

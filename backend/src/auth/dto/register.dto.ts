@@ -10,7 +10,7 @@ import {
 } from 'class-validator';
 import { Transform } from 'class-transformer';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { UserRole } from 'generated/prisma';
+import { UserRole } from '@prisma/client';
 
 export class RegisterDto {
   @ApiProperty({ example: 'John Doe', description: 'Full name of the user' })

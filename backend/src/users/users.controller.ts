@@ -26,7 +26,7 @@ import {
   ApiConsumes,
 } from '@nestjs/swagger';
 
-import { UserRole } from 'generated/prisma';
+import { UserRole } from '@prisma/client';
 import { UsersService } from './users.service';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserResponseDto } from './dto/create-user.dto';
@@ -40,7 +40,7 @@ import { AuthenticatedUser } from 'src/auth/interfaces/jwt.interface';
 import { FileUploadInterceptor } from 'src/common/interceptors/file-upload.interceptor';
 import { multerOptions } from 'src/config/multer.config';
 import { UploadImageResponseDto } from './dto/upload-image.dto';
-import { CloudinaryService } from 'src/common/cloudinary/cloudinary.service';
+import { CloudinaryService } from 'services/cloudinary/cloudinary.service';
 
 @ApiTags('users')
 @ApiBearerAuth('access-token')

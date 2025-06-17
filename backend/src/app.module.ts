@@ -5,6 +5,7 @@ import { AppController } from './app.controller';
 import { AuthModule } from './auth/auth.module';
 import { ProjectsModule } from './projects/projects.module';
 import { PrismaModule } from './config/prisma.config';
+import { EmailModule } from 'services/mailer/email.module';
 
 @Module({
   imports: [
@@ -15,7 +16,8 @@ import { PrismaModule } from './config/prisma.config';
     PrismaModule,
     AuthModule,
     UsersModule,
-    ProjectsModule
+    ProjectsModule,
+    EmailModule
   ],
   controllers: [AppController],
   providers: [],

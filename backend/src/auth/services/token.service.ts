@@ -7,13 +7,17 @@ import { JwtPayload } from '../interfaces/jwt.interface';
 export class TokenService {
   private readonly secret: string;
   private readonly expiresIn: string;
-
+  
   constructor(private configService: ConfigService) {
-    this.secret = this.configService.get<string>('JWT_SECRET') || 'default-secret';
-    this.expiresIn = this.configService.get<string>('JWT_EXPIRES_IN') || '24h';
+    this.secret = this.configService.get<string>('JWT_SECRET');
+    this.expiresIn = this.configService.get<string>('JWT_EXPIRES_IN');
   }
-
+  
+  
+  
   generateToken(payload: Omit<JwtPayload, 'iat' | 'exp'>): string {
+    console.log("JWT_SECRET:", this.secret);
+    console.log("JWT_EXPIRES_IN:", this.expiresIn);
     try {
       return jwt.sign(payload, this.secret, { expiresIn: this.expiresIn });
     } catch (error) {

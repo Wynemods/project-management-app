@@ -7,7 +7,7 @@ import {
   Logger,
 } from '@nestjs/common';
 import * as bcrypt from 'bcryptjs';
-import { UserRole } from 'generated/prisma';
+import { UserRole } from '@prisma/client';
 
 import { JwtPayload } from './interfaces/jwt.interface';
 import { AuthResponse, AuthUser } from './interfaces/auth.interface';
@@ -17,12 +17,14 @@ import { TokenService } from './services/token.service';
 
 import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
+import { EmailService } from 'services/mailer/email.service';
 
 @Injectable()
 export class AuthService {
   constructor(
     private usersService: UsersService,
     private tokenService: TokenService,
+    private emailService: EmailService,
   ) {}
 
   private readonly logger = new Logger(AuthService.name);
@@ -45,16 +47,18 @@ export class AuthService {
         role: registerDto.role || UserRole.USER,
       });
 
-      // Send welcome emails
-      // try {
-        // await this.mailerService.sendWelcomeEmail(user.email, {
-        //   name: user.name,
-        //   email: user.email,
-        // });
-      //   console.log(`Welcome email would be sent to ${user.email}`);
-      // } catch (emailError) {
-      //   console.warn(`Failed to send welcome email to ${user.email}:`, emailError.message);
-      // }
+      try {
+        await this.emailService.sendWelcomeEmail(user.email, {
+          name: user.name,
+          loginUrl: 'http://localhost:3000/pages/login.html',
+          supportEmail: 'support@project-managment.com',
+          email: 'ebs362920@gmail.com',
+          currentYear: new Date().getFullYear(),
+        });
+        console.log(`Welcome email would be sent to ${user.email}`);
+      } catch (emailError) {
+        console.warn(`Failed to send welcome email to ${user.email}:`, emailError.message);
+      }
 
       
       const payload: JwtPayload = {
@@ -247,16 +251,21 @@ export class AuthService {
         return { message: 'If your email is registered, you will receive a password reset link.' };
       }
 
-      // Generate password reset token (you might want to implement this)
-      // const resetToken = this.tokenService.generateResetToken(user.id);
-      
+      const payload: JwtPayload = {
+        sub: user.id,
+        email: user.email,
+        role: user.role,
+      };
+      const resetToken = this.tokenService.generateToken(payload);
       // Send password reset email
       try {
-        // await this.mailerService.sendPasswordResetEmail(user.email, {
-        //   name: user.name,
-        //   resetToken,
-        //   resetUrl: `${process.env.FRONTEND_URL}/reset-password?token=${resetToken}`
-        // });
+        await this.emailService.sendPasswordResetEmail(user.email, {
+          name: user.name,
+          resetToken,
+          resetUrl: `${process.env.FRONTEND_URL}/reset-password?token=${resetToken}`,
+          expiresIn: '1 hour',
+          email: 'support@project-management.com',
+        });
         console.log(`Password reset email would be sent to ${user.email}`);
       } catch (emailError) {
         console.warn(`Failed to send password reset email to ${user.email}:`, emailError.message);

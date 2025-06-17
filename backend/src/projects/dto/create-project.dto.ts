@@ -10,7 +10,7 @@ import {
   } from 'class-validator';
   import { Type } from 'class-transformer';
   import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-  import { ProjectStatus } from 'generated/prisma';
+  import { ProjectStatus } from '@prisma/client';
 import { AuthUser } from 'src/auth/interfaces/auth.interface';
   
   export class CreateProjectDto {

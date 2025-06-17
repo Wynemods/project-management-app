@@ -5,18 +5,22 @@ import {
   ConflictException,
   InternalServerErrorException,
 } from '@nestjs/common';
-import { ProjectStatus, UserRole } from 'generated/prisma';
+import { ProjectStatus, UserRole } from '@prisma/client';
 import { getPrismaClient } from 'src/config/prisma.config';
 
 import { CreateProjectDto } from './dto/create-project.dto';
 import { UpdateProjectDto } from './dto/update-project.dto';
 import { ProjectResponseDto } from './dto/create-project.dto';
 import { Project } from './interface/project.interface';
-import { PrismaClientKnownRequestError } from 'generated/prisma/runtime/library';
+import { EmailService } from 'services/mailer/email.service';
 
 @Injectable()
 export class ProjectsService {
   private prisma = getPrismaClient();
+
+  constructor(
+    private readonly emailService: EmailService,
+  ) {}
 
   async createProject(data: CreateProjectDto): Promise<ProjectResponseDto> {
     try {
@@ -76,7 +80,7 @@ export class ProjectsService {
         throw error;
       }
 
-      if (error instanceof PrismaClientKnownRequestError && error.code === 'P2002') {
+      if (error.code === 'P2002') {
         throw new ConflictException('User already has an assigned project');
       }
       
@@ -299,13 +303,25 @@ export class ProjectsService {
 
       const updatedProject = await this.prisma.project.update({
         where: { id: projectId },
-        data: { assignedUserId: userId },
+        data: { assignedUserId: userId, status: ProjectStatus.IN_PROGRESS },
         include: {
           assignedUser: {
             select: { id: true, name: true, email: true, role: true }
           }
         },
       });
+
+      if(updatedProject.assignedUser) {
+        await this.emailService.sendProjectAssignmentEmail(
+          updatedProject.assignedUser.email,{
+            projectName: updatedProject.name,
+            projectEndDate: updatedProject.endDate.toISOString(),
+            dashboardUrl: `${process.env.FRONTEND_URL}/dashboard/userDashboard`,
+            name: updatedProject.assignedUser.name,
+            email: updatedProject.assignedUser.email,
+          }
+        );
+      }
 
       return this.toResponseDto(updatedProject);
     } catch (error) {
@@ -378,6 +394,19 @@ export class ProjectsService {
           }
         },
       });
+
+      if (status === ProjectStatus.COMPLETED && updatedProject.assignedUser) {
+        await this.emailService.sendProjectCompletionEmail(
+          updatedProject.assignedUser.email,{
+            projectName: updatedProject.name,
+            projectEndDate: updatedProject.endDate.toISOString(),
+            dashboardUrl: `${process.env.FRONTEND_URL}/dashboard/userDashboard`,
+            name: updatedProject.assignedUser.name,
+            email: updatedProject.assignedUser.email,
+            completedDate: updatedProject.completedAt.toISOString(),
+          }
+        );
+      }
 
       return this.toResponseDto(updatedProject);
     } catch (error) {

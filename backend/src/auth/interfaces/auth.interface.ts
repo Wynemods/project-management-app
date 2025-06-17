@@ -1,4 +1,4 @@
-import { UserRole } from 'generated/prisma';
+import { UserRole } from '@prisma/client';
 
 export interface AuthResponse {
   access_token: string;

@@ -1,4 +1,4 @@
-import { UserRole } from "generated/prisma";
+import { UserRole } from "@prisma/client";
 
 export interface User {
     id: string;
@@ -11,4 +11,7 @@ export interface User {
     updatedAt: Date;
     lastLogin?: Date | null;
     isActive: boolean;
+
+    profileImageId:  string | null;
+    profileImageUrl: string | null;
 }

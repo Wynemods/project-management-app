@@ -1,7 +1,7 @@
 import { IsOptional, IsString, MinLength, MaxLength, IsEnum, IsDate, IsUUID } from "class-validator";
 import { ApiPropertyOptional } from "@nestjs/swagger";
 import { Type } from "class-transformer";
-import { ProjectStatus } from "generated/prisma";
+import { ProjectStatus } from "@prisma/client";
 
 export class UpdateProjectDto {
     @ApiPropertyOptional({ description: 'Project name', minLength: 2, maxLength: 100 })

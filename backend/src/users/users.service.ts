@@ -6,7 +6,7 @@ import {
   BadRequestException,
 } from '@nestjs/common';
 import * as bcrypt from 'bcryptjs';
-import { UserRole } from 'generated/prisma';
+import { UserRole } from '@prisma/client';
 import { getPrismaClient } from 'src/config/prisma.config';
 
 import { CreateUserDto } from './dto/create-user.dto';
@@ -501,6 +501,7 @@ export class UsersService {
       createdAt: user.createdAt,
       updatedAt: user.updatedAt,
       assignedProject: user.assignedProject,
+      profileImageUrl: user.profileImageUrl,
     });
   }
 }

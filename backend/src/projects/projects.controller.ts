@@ -20,7 +20,7 @@ import {
   ApiParam, 
   ApiQuery 
 } from '@nestjs/swagger';
-import { ProjectStatus, UserRole } from 'generated/prisma';
+import { ProjectStatus, UserRole } from '@prisma/client';
 
 import { ProjectsService } from './projects.service';
 import { CreateProjectDto } from './dto/create-project.dto';
@@ -132,7 +132,6 @@ export class ProjectsController {
     if (user.role === UserRole.USER && project.assignedUser?.id !== user.id) {
       const userProject = await this.projectsService.findProjectByUserId(user.id);
       if (!userProject || userProject.id !== id) {
-        // Return their actual project or throw not found
         throw new Error('Project not found');
       }
     }

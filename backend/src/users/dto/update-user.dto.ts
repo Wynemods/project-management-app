@@ -1,5 +1,5 @@
 import { IsOptional, IsString, IsEmail, IsBoolean, IsDate, MinLength, IsEnum, Matches } from 'class-validator';
-import { UserRole } from 'generated/prisma';
+import { UserRole } from '@prisma/client';
 
 export class UpdateUserDto {
   @IsOptional()
@@ -25,4 +25,12 @@ export class UpdateUserDto {
   @IsOptional()
   @IsEnum(UserRole)
   role?: UserRole;
+
+  @IsOptional()
+  @IsString({message: "Profile Image must be a string"})
+  profileImageId?: string;
+
+  @IsOptional()
+  @IsString({message: "Profile Image must be a string"})
+  profileImageUrl?: string;
 }

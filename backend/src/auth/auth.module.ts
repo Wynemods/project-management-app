@@ -13,8 +13,8 @@ import { JwtStrategy } from './strategies/jwt.strategy';
 import { JwtAuthGuard } from './guards/jwt.guard';
 import { RolesGuard } from './guards/roles.guard';
 import { PermissionsGuard } from './guards/permission.guard';
-import { ResourceOwnership } from './guards/resource-owner.guard';
 import { PermissionsMiddleware } from './middleware/permissions.middleware';
+import { EmailModule } from 'services/mailer/email.module';
 
 @Module({
   imports: [
@@ -30,6 +30,7 @@ import { PermissionsMiddleware } from './middleware/permissions.middleware';
         },
       }),
     }),
+    EmailModule,
   ],
   controllers: [AuthController],
   providers: [
@@ -40,6 +41,7 @@ import { PermissionsMiddleware } from './middleware/permissions.middleware';
     JwtAuthGuard,
     RolesGuard,
     PermissionsGuard,
+
   ],
   exports: [
     AuthService,
