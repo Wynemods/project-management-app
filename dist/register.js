@@ -24,6 +24,10 @@ profilePicInput.addEventListener("change", () => {
         // Hide preview if no file selected
         profilePreviewContainer.style.display = "none";
     }
+    {
+        // Hide preview if no file selected
+        profilePreviewContainer.style.display = "none";
+    }
 });
 // Toggle password visibility
 togglePassword.addEventListener("click", () => {
@@ -86,9 +90,64 @@ function validateForm(userName, email, password, confirmPassword) {
     }
     return null;
 }
+// Form validation function to match backend requirements
+function validateForm(userName, email, password, confirmPassword) {
+    // Name validation
+    if (!userName || typeof userName !== 'string') {
+        return "Name is required and must be a string";
+    }
+    const trimmedName = userName.trim();
+    if (trimmedName.length < 2) {
+        return "Name must be at least 2 characters long";
+    }
+    if (trimmedName.length > 50) {
+        return "Name must not exceed 50 characters";
+    }
+    // Email validation
+    if (!email || typeof email !== 'string') {
+        return "Email is required";
+    }
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    if (!emailRegex.test(email.trim())) {
+        return "Please provide a valid email address";
+    }
+    // Password validation
+    if (!password || typeof password !== 'string') {
+        return "Password must be a string";
+    }
+    if (password.length < 8) {
+        return "Password must be longer than or equal to 8 characters";
+    }
+    if (password.length > 128) {
+        return "Password must be shorter than or equal to 128 characters";
+    }
+    // Password complexity validation
+    const hasUppercase = /[A-Z]/.test(password);
+    const hasLowercase = /[a-z]/.test(password);
+    const hasNumber = /\d/.test(password);
+    const hasSpecialChar = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password);
+    if (!hasUppercase || !hasLowercase || !hasNumber || !hasSpecialChar) {
+        return "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character";
+    }
+    if (password !== confirmPassword) {
+        return "Passwords do not match";
+    }
+    return null;
+}
 // Form submit logic
 registerForm.addEventListener("submit", async (e) => {
     e.preventDefault();
+    // Get form values
+    const userName = document.getElementById("userName").value;
+    const email = document.getElementById("email").value;
+    const password = passwordInput.value;
+    const confirmPassword = confirmPasswordInput.value;
+    // Validate form
+    const validationError = validateForm(userName, email, password, confirmPassword);
+    if (validationError) {
+        alert(validationError);
+        return;
+    }
     // Get form values
     const userName = document.getElementById("userName").value;
     const email = document.getElementById("email").value;
@@ -182,9 +241,37 @@ registerForm.addEventListener("submit", async (e) => {
             else {
                 alert(`Registration failed with status ${response.status}`);
             }
+            // Handle validation errors from backend
+            if (result.message && Array.isArray(result.message)) {
+                // If backend returns array of validation errors
+                const errorMessages = result.message.join('\n');
+                alert(`Registration failed:\n\n${errorMessages}`);
+            }
+            else if (result.error) {
+                alert(`Registration failed: ${result.error}`);
+            }
+            else if (result.message) {
+                alert(`Registration failed: ${result.message}`);
+            }
+            else {
+                alert(`Registration failed with status ${response.status}`);
+            }
         }
     }
     catch (error) {
+        console.error("Registration error:", error);
+        // More specific error messages
+        if (error instanceof TypeError && error.message.includes("fetch")) {
+            alert("Cannot connect to server. Please check if the server is running on http://localhost:3000");
+        }
+        else {
+            if (error && typeof error === "object" && "message" in error) {
+                alert(`An error occurred during registration: ${error.message || 'Please try again.'}`);
+            }
+            else {
+                alert("An error occurred during registration: Please try again.");
+            }
+        }
         console.error("Registration error:", error);
         // More specific error messages
         if (error instanceof TypeError && error.message.includes("fetch")) {
