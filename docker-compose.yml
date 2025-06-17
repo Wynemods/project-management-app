@@ -1,19 +1,44 @@
-
+version: "3.9"
 
 services:
+  database:
+    image: postgres:15-alpine
+    container_name: postgres-db
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: db_project_management
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    ports:
+      - "5433:5432"
+
   backend:
-    build: ./backend
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: nestjs-backend
     ports:
       - "3000:3000"
     volumes:
       - ./backend:/app
     env_file:
       - ./backend/.env
+    depends_on:
+      - database
     command: npm run start:dev
 
   frontend:
-    build: ./frontend
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: ts-frontend
     ports:
-      - "8080:80"
-    volumes:
-      - ./frontend:/usr/share/nginx/html
+      - "8080:8080"   
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+volumes:
+  db_data:

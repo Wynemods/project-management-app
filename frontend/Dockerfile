@@ -1,28 +1,29 @@
-# Step 1: Build with Node
-FROM node:20-alpine AS builder
+# Stage 1: Build TS
+FROM node:18 AS build
 
 WORKDIR /app
 
-# Copy dependency files and install
-COPY package*.json ./
+# Install dependencies
+COPY package.json package-lock.json ./
 RUN npm install
 
-# Copy rest of the project
-COPY . .
+# Copy config and source
+COPY tsconfig.json ./
+COPY src ./src
 
-RUN ls -la && cat tsconfig.json && npm run build
-
-# Run build script (this compiles TS and copies HTML/CSS)
+# Build project
 RUN npm run build
 
-# Step 2: Serve with Nginx
-FROM nginx:alpine
+# Stage 2: Serve via http-server
+FROM node:18-slim
 
-# Copy static files from builder's dist folder to Nginx web root
-COPY --from=builder /app/dist /usr/share/nginx/html
+WORKDIR /app
 
-# Expose port 80
-EXPOSE 80
+RUN npm install -g http-server
 
-# Start Nginx
-CMD ["nginx", "-g", "daemon off;"]
+# Copy build output from Stage 1
+COPY --from=build /app/dist ./dist
+
+EXPOSE 8080
+
+CMD ["http-server", "dist", "-p", "8080"]

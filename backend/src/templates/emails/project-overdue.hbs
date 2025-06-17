@@ -1,0 +1,46 @@
+<div class="header" style="background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);">
+    <h1>Project Overdue ⚠️</h1>
+    <p>{{projectName}} requires immediate attention</p>
+</div>
+
+<div class="content">
+    <h2>Hello {{name}},</h2>
+    
+    <p>We're writing to inform you that your assigned project <strong>{{projectName}}</strong> is now overdue and requires immediate attention.</p>
+    
+    <div class="info-box" style="background-color: #fef2f2; border-left-color: #ef4444;">
+        <h3 style="color: #be123c;">⚠️ Overdue Project Details</h3>
+        <p style="color: #be123c;"><strong>Project Name:</strong> {{projectName}}</p>
+        {{#if projectDescription}}
+        <p style="color: #be123c;"><strong>Description:</strong> {{projectDescription}}</p>
+        {{/if}}
+        <p style="color: #be123c;"><strong>Original Deadline:</strong> {{projectEndDate}}</p>
+        <p style="color: #be123c;"><strong>Days Overdue:</strong> Check your dashboard for details</p>
+    </div>
+    
+    <p><strong>Immediate Action Required:</strong></p>
+    <ul>
+        <li>Log into your dashboard immediately</li>
+        <li>Update the project status with current progress</li>
+        <li>Contact your supervisor if you need assistance</li>
+        <li>Provide an estimated completion date</li>
+    </ul>
+    
+    <div class="text-center mt-20">
+        <a href="{{dashboardUrl}}" class="btn" style="background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); box-shadow: 0 4px 10px rgba(239, 68, 68, 0.2);">Update Project Now</a>
+    </div>
+    
+    <div class="divider"></div>
+    
+    <p>We understand that sometimes unexpected circumstances can affect project timelines. Please reach out to our team immediately if you're facing any challenges or need support to complete this project.</p>
+    
+    <p>Time is critical, so please take action as soon as possible.</p>
+    
+    <p>Best regards,<br>
+    The {{appName}} Team</p>
+</div>
+
+<div class="footer">
+    <p>&copy; {{currentYear}} {{appName}}. All rights reserved.</p>
+    <p>Need help? Contact us at <a href="mailto:{{supportEmail}}">{{supportEmail}}</a></p>
+</div>

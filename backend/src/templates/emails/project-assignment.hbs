@@ -1,0 +1,46 @@
+<div class="header">
+    <h1>New Project Assignment! 📋</h1>
+    <p>You've been assigned to {{projectName}}</p>
+</div>
+
+<div class="content">
+    <h2>Congratulations {{name}}!</h2>
+    
+    <p>You've been assigned to a new project. We're confident you'll do an excellent job!</p>
+    
+    <div class="info-box">
+        <h3>📝 Project Details</h3>
+        <p><strong>Project Name:</strong> {{projectName}}</p>
+        {{#if projectDescription}}
+        <p><strong>Description:</strong> {{projectDescription}}</p>
+        {{/if}}
+        <p><strong>Deadline:</strong> {{projectEndDate}}</p>
+        <p><strong>Status:</strong> Ready to start</p>
+    </div>
+    
+    <p><strong>Next Steps:</strong></p>
+    <ul>
+        <li>Review the project details in your dashboard</li>
+        <li>Update the project status when you begin working</li>
+        <li>Track your progress regularly</li>
+        <li>Reach out if you need any clarification</li>
+    </ul>
+    
+    <div class="text-center mt-20">
+        <a href="{{dashboardUrl}}" class="btn">View Project Dashboard</a>
+    </div>
+    
+    <div class="divider"></div>
+    
+    <p>We're here to support you throughout this project. If you have any questions or need assistance, please don't hesitate to reach out.</p>
+    
+    <p>Good luck with your project!</p>
+    
+    <p>Best regards,<br>
+    The {{appName}} Team</p>
+</div>
+
+<div class="footer">
+    <p>&copy; {{currentYear}} {{appName}}. All rights reserved.</p>
+    <p>Need help? Contact us at <a href="mailto:{{supportEmail}}">{{supportEmail}}</a></p>
+</div>

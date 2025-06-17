@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Register - Project Management System</title>
+    <link rel="stylesheet" href="../../styles/register.css" />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div class="container">
+      <div class="register-wrapper">
+        <!-- Branding -->
+        <div class="branding-section">
+          <div class="branding-content">
+            <div class="logo">
+              <i class="fas fa-project-diagram"></i>
+              <h1>ProjectManager</h1>
+            </div>
+            <h2>Join Our Platform</h2>
+            <p>
+              Create your account to start managing projects efficiently and
+              collaborate with your team.
+            </p>
+            <div class="features">
+              <div class="feature">
+                <i class="fas fa-tasks"></i><span>Project Management</span>
+              </div>
+              <div class="feature">
+                <i class="fas fa-users"></i><span>Team Collaboration</span>
+              </div>
+              <div class="feature">
+                <i class="fas fa-bell"></i><span>Email Notifications</span>
+              </div>
+              <div class="feature">
+                <i class="fas fa-shield-alt"></i><span>Secure Access</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Registration Form -->
+        <div class="form-section">
+          <div class="form-container">
+            <div class="form-header">
+              <h2>Create Account</h2>
+              <p>Fill in your details to get started</p>
+            </div>
+
+            <div id="alert-container"></div>
+
+            <form id="registerForm" class="register-form">
+              <div class="form-group">
+                <label for="fullName"
+                  ><i class="fas fa-user"></i> Name</label
+                >
+                <input
+                  type="text"
+                  id="userName"
+                  name="userName"
+                  placeholder="Enter your name"
+                  required
+                />
+                <span class="error-message" id="fullName-error"></span>
+              </div>
+
+              <div class="form-group">
+                <label for="email"
+                  ><i class="fas fa-envelope"></i> Email Address</label
+                >
+                <input
+                  type="email"
+                  id="email"
+                  name="email"
+                  placeholder="Enter your email address"
+                  required
+                />
+                <span class="error-message" id="email-error"></span>
+              </div>
+
+              <div class="form-group">
+                <label for="profilePic"
+                  ><i class="fas fa-image"></i> Upload Profile Picture</label
+                >
+                <input
+                  type="file"
+                  id="profilePic"
+                  name="profilePic"
+                  accept="image/*"
+                />
+                <span class="error-message" id="profilePic-error"></span>
+                <div
+                  class="profile-preview"
+                  id="profilePreviewContainer"
+                  style="display: none"
+                >
+                  <p>Preview:</p>
+                  <img
+                    id="profilePreview"
+                    src=""
+                    alt="Profile Preview"
+                    style="max-width: 120px; border-radius: 8px"
+                  />
+                </div>
+              </div>
+
+
+              <div class="form-group">
+                <label for="password"
+                  ><i class="fas fa-lock"></i> Password</label
+                >
+                <div class="password-input">
+                  <input
+                    type="password"
+                    id="password"
+                    name="password"
+                    placeholder="Create a strong password"
+                    required
+                  />
+                  <button
+                    type="button"
+                    class="toggle-password"
+                    id="togglePassword"
+                  >
+                    <i class="fas fa-eye"></i>
+                  </button>
+                </div>
+                <div class="password-strength" id="passwordStrength">
+                  <div class="strength-bar">
+                    <div class="strength-fill"></div>
+                  </div>
+                  <span class="strength-text">Password strength</span>
+                </div>
+                <span class="error-message" id="password-error"></span>
+              </div>
+
+              <div class="form-group">
+                <label for="confirmPassword"
+                  ><i class="fas fa-lock"></i> Confirm Password</label
+                >
+                <div class="password-input">
+                  <input
+                    type="password"
+                    id="confirmPassword"
+                    name="confirmPassword"
+                    placeholder="Confirm your password"
+                    required
+                  />
+                  <button
+                    type="button"
+                    class="toggle-password"
+                    id="toggleConfirmPassword"
+                  >
+                    <i class="fas fa-eye"></i>
+                  </button>
+                </div>
+                <span class="error-message" id="confirmPassword-error"></span>
+              </div>
+
+              <button type="submit" class="register-btn" id="registerBtn">
+                <span class="btn-text">Create Account</span>
+                <span class="btn-loader" id="btnLoader"
+                  ><i class="fas fa-spinner fa-spin"></i
+                ></span>
+              </button>
+            </form>
+
+            <div class="form-footer">
+              <p>
+                Already have an account?
+                <a href="/pages/login/login.html" class="link">Sign in here</a>
+              </p>
+            </div>
+
+            <div class="social-register">
+              <div class="divider"><span>Or register with</span></div>
+              <div class="social-buttons">
+                <button type="button" class="social-btn google-btn">
+                  <i class="fab fa-google"></i> Google
+                </button>
+                <button type="button" class="social-btn microsoft-btn">
+                  <i class="fab fa-microsoft"></i> Microsoft
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="./register.js">defer</script>
+  </body>
+</html>

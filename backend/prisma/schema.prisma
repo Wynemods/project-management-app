@@ -1,0 +1,58 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  USER
+  ADMIN
+}
+
+enum ProjectStatus {
+  NOT_STARTED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
+
+model User {
+  id        String    @id @default(uuid())
+  email     String    @unique
+  name      String
+  password  String
+  role      UserRole  @default(USER)
+  lastLogin DateTime? @map("last_login")
+  isActive  Boolean   @default(true) @map("is_active")
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+
+  profileImageId  String? @unique @map("profile_image_id")
+  profileImageUrl String? @map("profile_image_url")
+
+  assignedProject Project?
+
+  @@map("users")
+}
+
+model Project {
+  id          String        @id @default(uuid())
+  name        String        @db.VarChar(255)
+  description String?        @db.Text
+  endDate     DateTime      @map("end_date")
+  status      ProjectStatus @default(NOT_STARTED)
+  createdAt   DateTime      @default(now()) @map("created_at")
+  updatedAt   DateTime      @updatedAt @map("updated_at")
+  completedAt DateTime?     @map("completed_at")
+  
+  assignedUserId String? @unique @map("assigned_user_id")
+  assignedUser   User?   @relation(fields: [assignedUserId], references: [id], onDelete: SetNull)
+  
+  @@map("projects")
+  @@index([status])
+  @@index([endDate])
+  @@index([assignedUserId])
+}

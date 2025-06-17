@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>User Dashboard - Project Management System</title>
+  <link rel="stylesheet" href="../../../styles/main.css">
+  <link rel="stylesheet" href="../../../styles/userDashboard.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+  <div class="dashboard-container">
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <h2>ProjectManager</h2>
+      </div>
+      <nav class="sidebar-nav">
+        <ul>
+          <li class="active">
+            <a href="../../dashboard/user/userDashboard.html">
+              <i class="fas fa-tachometer-alt"></i>
+              <span>Dashboard</span>
+            </a>
+          </li>
+          <li>
+            <a href="#my-project">
+              <i class="fas fa-folder-open"></i>
+              <span>My Project</span>
+            </a>
+          </li>
+          <li>
+            <a href="#profile">
+              <i class="fas fa-user"></i>
+              <span>Profile</span>
+            </a>
+          </li>
+          <li class="logout">
+            <a href="#" id="logout-btn">
+              <i class="fas fa-sign-out-alt"></i>
+              <span>Logout</span>
+            </a>
+          </li>
+        </ul>
+      </nav>
+    </aside>
+
+    <main class="main-content">
+      <header class="dashboard-header">
+        <div class="header-title">
+          <h1>My Dashboard</h1>
+        </div>
+        <div class="user-info">
+          <span class="user-name" id="current-user-name">User Name</span>
+          <div class="user-avatar">
+            <i class="fas fa-user-circle"></i>
+          </div>
+        </div>
+      </header>
+
+      <div class="dashboard-content">
+        <section class="my-project-section" id="my-project">
+          <div class="section-header">
+            <h2>My Assigned Project</h2>
+          </div>
+
+          <div id="project-container">
+            <!-- Project will be loaded here dynamically -->
+            <div class="no-project-message" id="no-project-message" style="display: none;">
+              <div class="empty-state">
+                <i class="fas fa-folder-open"></i>
+                <h3>No Project Assigned</h3>
+                <p>You don't have any projects assigned to you at the moment. Please contact your administrator if you believe this is an error.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="profile-section" id="profile">
+          <div class="section-header">
+            <h2>My Profile</h2>
+          </div>
+
+          <div class="profile-card">
+            <div class="profile-info">
+              <div class="profile-avatar">
+                <i class="fas fa-user-circle"></i>
+              </div>
+              <div class="profile-details">
+                <h3 id="current-user-name"></h3>
+                <p id="profile-email">user@example.com</p>
+                <p><small>Member since: <span id="profile-date">January 1, 2023</span></small></p>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <!-- Modal for project completion confirmation -->
+    <div class="modal" id="completion-modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2>Complete Project</h2>
+          <button class="close-btn">&times;</button>
+        </div>
+        <div class="modal-body">
+          <p>Are you sure you want to mark this project as completed? This action cannot be undone.</p>
+          <div class="form-actions">
+            <button type="button" class="btn btn-outline" id="cancel-completion">Cancel</button>
+            <button type="button" class="btn btn-primary" id="confirm-completion">Mark as Completed</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="./userDashboard.js"> defer</script>
+</body>
+</html>
